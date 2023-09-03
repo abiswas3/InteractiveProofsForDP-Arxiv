@@ -1,0 +1,217 @@
+\section{Preliminaries}
+\label{sec:prelims}
+
+\paragraph{General Notation}
+
+We write $x \samples U$ to denote that $x$ was uniformly sampled from a set $U$. We write $A \gets (a,b,c)$ to denote that an algorithm $A$ receives $a,b$ and $c$ as inputs.
+We denote vectors with an arrow on top as in $\vec{x} \in \Z_q^M$, where $M$ represents the number of coordinates
+in the vector and $\Z_q$ represents a prime order finite field of integers of size $q$. 
+We write $\vec{a} + \vec{b}$ to mean coordinate-wise vector addition $a + b \mod q$, where $a$ and $b$ correspond to values at the same position of $\vec{a}$ and
+$\vec{b}$.  
+Similarly, when we write $\vec{a} \times \vec{b}$, we refer to the coordinate-wise Hadamard product between the two vectors.
+
+\paragraph{Public Parameters}
+
+\paragraph{MPC setting}
+
+\paragraph{Privacy and Security Background}
+\label{sec:background}
+
+%Negligible
+\begin{definition}[Negligible Functions]
+A function $\Negl: \Naturals \rightarrow \Reals$	is negligible iff $\forall c \in \Naturals$, there $\exists n_c \in \Naturals$, such that $\forall n > n_c$, $\mu(n) \leq n^{-c}$.
+\end{definition}
+
+% Stat Ind
+\begin{definition}[Statistical Distinguishablity] We say two probability ensembles $\{ X_n\}_{n \in \Naturals }$ and  $\{ Y_n\}_{n \in \Naturals}$ are statistically indistinguishable if there exists a negligible function $\Negl$ such that, for all sufficiently large $n$'s it holds that 
+
+\begin{equation*}
+	 \TV{(X_n, Y_n)} \leq \Negl(n)
+\end{equation*} 
+
+We denote two statistically indistinguishable distributions as $\{ X_n\}_{n \in \Naturals} \statInd \{
+  Y_n\}_{n \in \Naturals}$. If we have $\Negl(n) = 0$, we say the two distributions are perfectly indistinguishable and we denote it as $\{ X_n\}_{n \in \Naturals} \equiv \{
+  Y_n\}_{n \in \Naturals}$.
+	
+\end{definition}
+
+\begin{definition}[Computational Indistinguishability]
+  \label{defn:indisitinguish} Let $\{ X_n\}_{n \in \Naturals }$ and $\{ Y_n\}_{n \in \Naturals }$ be a pair of ensembles where $X_n$ and $Y_n$ are probability distributions over $\bit^{\poly(n)}$. 
+We say that $\{ X_n\}_{n \in N }$ and $\{ Y_n\}_{n \in \Naturals }$
+  are computationally indistinguishable if for all non-uniform PPT Turing machines $D$ (``distinguishers''), there exists a negligible function $\Negl$, such that for every $n \in \Naturals$
+
+\begin{equation*}
+    \Big| \Pr[D(X_n) = 1] - \Pr[D(Y_n) = 1] \Big| \leq \Negl(n) 
+\end{equation*}
+  
+We denote computational indistinguishability as $\{ X_n\}_{n \in \Naturals} \compInd \{
+  Y_n\}_{n \in \Naturals}$.
+   
+\end{definition}
+
+%\paragraph{Commitments}Commitments are used in our schemes to ensure that participants cannot change their response during the protocol.
+
+\begin{definition}[Non Interactive Commitment Schemes] \label{def:commitments}Let $\SecurityParam \in \Naturals$ be the security
+  parameter. 
+  A non-interactive commitment scheme consists of a pair of
+  probabilistic polynomial time algorithms (\texttt{Setup, Com}). 
+  The setup algorithm $\pp \samples \texttt{Setup}(1^\SecurityParam)$ generates
+  public parameters $\pp$ for a given security parameter $\SecurityParam$. 
+  Given sets $\texttt{M}_{\pp}$ (message space) and $\texttt{R}_{\pp}$ (random space), the commitment algorithm
+  $\texttt{Com}_{\pp}$ defines a function
+  $\texttt{M}_{\pp} \times \texttt{R}_{\pp} \rightarrow
+  \texttt{C}_{\pp}$ that maps a message from the message space to the commitment space
+  $\texttt{C}_{\pp}$ using the random space. For a message
+  $x \in \texttt{M}_\pp$, the algorithm samples
+  $r_x \samples \texttt{R}_\pp$ and computes
+  $c_x = \texttt{Com}_{\pp}(x, r_x)$. When the context is clear, will
+  drop the subscript and write $\texttt{Com}_\pp $ as $\texttt{Com}$.
+\end{definition}
+
+\begin{definition}[Homomorphic Commitments]
+\label{defn:hom_coms}
+A homomorphic commitment scheme is a non-interactive commitment scheme
+such that $\texttt{M}_\pp$ and $ \texttt{R}_\pp$ are fields (with
+$(+, \times)$) and $\texttt{C}_\pp$ is an abelian group with the
+$\otimes$ operator, such
+that for all $x_1, x_2 \in \texttt{M}_\pp$ and
+$r_1, r_2 \in \texttt{R}_\pp$ we have
+%
+\begin{equation}
+\label{eq:hom_coms}
+\texttt{Com}(x_1, r_1) \otimes \texttt{Com}(x_2, r_2) = \texttt{Com}(x_1 + x_2, r_1 + r_2)
+\end{equation}
+\end{definition}
+
+
+% \textbf{Vector Notation For Commitments}: We define a vector commitment for  a vector $\vec{x} = (x_1, \dots, x_M)$ as the coordinate wise commitment of each coordinate of $\vec{x}$ using a random vector $(r_{1}, \dots, r_{M}) = \vec{r} \samples \texttt{R}_\pp^M$
+% %
+% \begin{equation}
+% \Com(\vec{x}, \vec{r}) =  \vec{c_x}
+% \end{equation}
+% When we write $\vec{c}_x \times \vec{c}_y$, we mean the Hadamard product over $\G_q^M$. 
+
+Throughout this paper, when we use a commitment scheme, we mean a non-interactive homomorphic commitment scheme  with the following properties (stated informally here, but formalised in the Appendix \ref{app:sec_defns}): 
+
+\begin{enumerate}
+    \item{\textbf{Hiding:}  A commitment $c_x$ reveals no information about $x$ and $r_x$ to a computationally bounded adversary (Definition~\ref{defn:hiding_com}).}
+
+    \item{\textbf{Binding:} Given a commitment $c_x$ to $x$ using $r_x$, there is no efficient algorithm that can find $x^\prime$ and $r_{x^\prime}$ such that $\Com(x^\prime, r_{x^\prime}) = c_x = \Com(x, r_{x})$ (Definition~\ref{defn:binding_com}).}
+
+    \item{\textbf{Zero Knowledge OR Opening:} Given $c_x$, the committing party can prove to a polynomial time verifier that $c_x$ is a commitment to either 1 or 0 without revealing which one it is. We denote such a proof as $\Pi_{\texttt{OR}}$ and say it securely computes the oracle $\oracle_{\texttt{OR}}$, which returns true if $c_x \in L_{\texttt{Bit}}$ 
+    \begin{equation}
+        L_{\texttt{Bit}} = \{c_x: x \in \bit \land  r_x \in \Z_q \land c_x = \Com(x, r_x) \}
+    \end{equation}
+    See Appendix \ref{app:sigma_open} for a concrete construction of the $\Sigma$-OR proof using Pedersen Commitment schemes from~\cite{damgaard2000efficient}.
+    }
+\end{enumerate}
+
+In all our experiments and security proofs, we use Pedersen Commitments (PC), though one could replace PC with ~\cite{weng2021wolverine, dittmer2020line, baum2021mathsf}, and still satisfy all the above properties.
+
+\subsection{Differential Privacy As Distribution Testing}
+
+\statetheoremsolid{0.95\textwidth}{
+\begin{definition}[Information Theoretic Approximate DP]
+\label{def:dp_approx_definition}
+Fix $\SecurityParam \in \Naturals$ as the security parameter. Let $n = \poly(\SecurityParam)$ and  $\Eps \geq 0$ and $\Proximity \leq \Negl(n)$ for some negligible function $\Negl$. Let $\FuncFamily  = \{f: \FuncDomain^n \rightarrow \FuncRange \}$ denote a family of functions whose output we wish to make differentially private. Further, assume that the L1 norm is well defined on $\FuncDomain$ and $\FuncRange$. Define a mechanism $\Mechanism: \FuncDomain^n \times \FuncFamily \rightarrow \oracle_{\Delta(\FuncRange)}$ that takes as input $n$ client inputs $X=(x_1, \dots, x_n)$ and a function $f \in \FuncFamily$ and constructs a distribution $\Mechanism(X, f) \in \Delta(\FuncRange)$. It then outputs an oracle $\oracle_{\Mechanism(X,f)}$ that provides sample access to $\Mechanism(X,f)$. $\Mechanism$ satisfies $\Eps$ differential privacy if for \highlight{every} two neighboring datasets $X \sim X^{\prime}$ such that $||X - X^{\prime} ||_1 = 1$ and  for \highlight{every} query $f \in \FuncFamily$ we have \highlight{for all} $T \subseteq \FuncRange$
+%
+\begin{align}
+\label{eq:approx_dp}
+    \Pr_{Y \samples M(X, f)}{[ Y \in T]} &\leq e^{\epsilon}\Pr_{Y \samples M(X', f)}{[Y \in T]} + \Proximity
+\end{align}
+\end{definition}
+}
+
+
+%
+%% Information Theoretic DP
+%\begin{definition}[Information Theoretic DP~\cite{vadhan2017complexity}]
+%\label{def:dp_definitions}
+%Fix $n \in \Naturals, \epsilon \geq 0$ and $\delta \leq n^{-\omega(1)}$. Let $\FuncDomain$ and $\FuncRange$ denote metric spaces where the L1 norm $||\cdot ||_1$ is well defined. An algorithm $\Mechanism: \FuncDomain^n \times \FuncFamily \rightarrow \FuncRange$ satisfies $(\epsilon, \delta)$ differential privacy if for every two neighboring datasets $X \sim X^{\prime}$ s.t. $||X - X^{\prime} ||_1 = 1$ and  for every query $Q \in \FuncFamily$ we have for all $T \subseteq \FuncRange$
+%%
+%\begin{align}
+%\label{eq:dp}
+%    \Pr_{Y \samples \Mechanism(X, Q)}[Y \in T] &\leq e^{\epsilon}\Pr_{Y \samples \Mechanism(X', Q)}[Y \in T] + \delta
+%\end{align}
+%\end{definition}
+
+%A direct corollary of the above definition is that, given $M_Q(X)$ and $M_Q(X^\prime)$, with probability $1- \delta$ even an unbounded Turing Machine (TM) $D$ is unable to distinguish between the outputs up to statistical distance $\epsilon$. 
+
+
+%\paragraph{Computational Differential Privacy (IND-CDP)}
+\statetheoremsolid{0.95\textwidth}{
+\begin{definition}[IND-CDP~\cite{mironov2009computational}]
+\label{def:comp_dp_definitions} 
+Fix $\SecurityParam \in \Naturals$ and $n = \poly(\SecurityParam)$. Let $\epsilon \geq 0$ and $\delta(\SecurityParam) \leq \SecurityParam^{-\omega(1)}$ be a negligible function in $\SecurityParam$, and let $\Mechanism = \{ \Mechanism_\SecurityParam : \FuncDomain_\SecurityParam^n \times \FuncFamily \rightarrow  \oracle_{\Delta(\FuncRange_\SecurityParam)} \}_{\SecurityParam \in \Naturals}$ be a family of randomised algorithms, where $\mathcal{X}_\SecurityParam$ and $\mathcal{Y}_\SecurityParam$ can be represented by $\texttt{poly}(\SecurityParam)$-bit strings. 
+We say that $\Mechanism$ is \textit{computationally $\epsilon$-differentially private} if for every non-uniform PPT TM's (``distinguisher'') $D$, for every query $f \in \FuncFamily$, and every neighbouring dataset $X \sim X^\prime \in \mathcal{X}_\SecurityParam^n$, for any $T \subseteq \FuncRange_\SecurityParam$ we have 
+
+\begin{equation}    
+\Pr_{Y \samples \Mechanism_\SecurityParam(X, Q)}\Big[ D(Y \in T) = 1\Big] \leq e^{\epsilon}\Pr_{Y \samples \Mechanism_\SecurityParam(X^\prime, Q)}\Big[ D(Y \in T) = 1\Big] + \delta(\SecurityParam)
+\end{equation}
+
+\end{definition}
+}
+
+%\paragraph{DP-Error}
+
+\begin{definition}[DP-Error] Let $\Mechanism: \FuncDomain^n \times \FuncFamily \rightarrow \FuncRange$ be a $\EpsDelta$-DP mechanism for query family $\FuncFamily$ where the $L_1$ norm is well-defined on $\FuncRange$. 
+For any $n\in \Naturals$, $X \in \mathcal{X}^n$, we define the expected error of the mechanism $\Mechanism$ relative to $Q$ as 
+%
+\begin{equation}
+\label{eq:error}
+\texttt{Err}_{\Mechanism, Q} = \mathbb{E}_{\hat{Y} \samples \Mechanism(X, Q)}[\|Q(X) - \hat{Y}\|_{1}]   
+\end{equation}
+
+where the expectation is taken over internal randomness of $\Mechanism$. \end{definition}
+
+When the context is clear, to simplify notation we drop subscripts and refer to equation \eqref{eq:error} as just \texttt{Err}.
+It is well known that for negligible $\delta$, the counting query (i.e., DP histograms) has error $\texttt{Err} = O(\frac{1}{\epsilon})$ in the trusted curator model and MPC model~\cite{vadhan2017complexity, corrigan-gibbs_prio_2017}.
+
+
+\statetheoremsolid{0.95\textwidth}{
+\begin{lemma}[Binomial Mechanism]
+\label{theorem:dp_guarantee}
+ Let $X=(x_1, \dots, x_n) \in \Z_q^n$, where $n \ll q$ and define counting query $Q(X) = \sum_{i=1}^n x_i$. Fix $\noisen > 30$, $0 < \delta \leq o(\frac{1}{\noisen})$. The mechanism $\Mechanism$ that samples $Z \samples \texttt{Binomial}(\noisen, \frac{1}{2})$, computes $Q(X)$ and outputs $Z + Q(X)$ is an $(\epsilon, \delta)$-differentially private mechanism with $\epsilon = 10\sqrt{\frac{1}{\noisen}\ln\frac{2}{\delta}}$.
+\end{lemma}
+}
+
+%
+It is easy to see that the binomial mechanism incurs constant and thus optimal DP error (i.e., it is independent of $n$ and depends only on $\epsilon, \delta$). The proof for Lemma \ref{theorem:dp_guarantee} follows the same techniques as the classical gaussian mechanism and can be found in \cite{ghazi_power_2020}, which we re-derive in Appendix \ref{app:dp_proof_bin_mech} for completeness.
+
+
+
+
+\paragraph{Morra}
+\label{sec: morra}
+We will prove zero knowledge (or security for MPC), assuming all participants have access to an oracle that returns a polynomial sized stream of publicly random unbiased bits. 
+In other words, we assume that all parties have access to an oracle functionality $\oracle_\Morra(1^{\SecurityParam})$, which they can jointly invoke to receive a common output $\vec{z} \samples \bit^{\poly(\SecurityParam)}$. 
+
+\begin{remark} As we will operate in the dishonest majority setting, we cannot guarantee output delivery. Thus an honest party not receiving output $\vec{z}$ is unavoidable and is not considered a security violation.
+\end{remark}
+
+In practice, this oracle is replaced by a lightweight MPC protocol such as $\Pi_{\Morra}$ defined in Algorithm~\ref{alg: morra}, which is a modification of an ancient game called Morra\footnote{\url{https://en.wikipedia.org/wiki/Morra_(game)}}, that securely computes $\oracle_\Morra$ in the presence of a dishonest majority of active participants.
+It is easy to see that as long as one participant is honest and samples its value uniformly at random, the final protocol produces an unbiased coin.  Since the commitment is hiding, a corrupt party cannot infer any information about the other parties choice $m_k$ from the published $c_{m_k}$ and by the binding property, a participant cannot change their decision after observing another party's opening. A formal simulator-styled proof can be found in Blum's seminal work for flipping coins over a telephone~\cite{blum1983coin} or any introductory textbook on MPC (under the title weak coin flipping).  If we omit the final thresholding step, the above protocol can be used to sample $z \samples Z_q$. Repeating Algorithm \ref{alg: morra} polynomially many times (in parallel) gives us a polynomial-sized stream of unbiased bits.
+
+
+
+\begin{figure}
+\fbox{\begin{minipage}{0.98\textwidth}
+\textbf{Input}: Security Parameter $1^\SecurityParam$ and number of parties $K$\\
+\textbf{Output}: $z \samples \bit$ 
+
+\begin{enumerate}
+    \item {Each party $k \in [K]$ is asked to sample $m_k \samples \Z_q$ uniformly at random.}
+    
+    \item{\textit{Commit}: Each server samples $r_{m_k} \samples \Z_q$ and broadcasts $c_{k} = \Com(m_k,r_k)$ to all other servers. Assume without loss of generality that the servers broadcast their commitments in natural lexicographical order $k \in [K]$. }
+    
+    \item{\textit{Reveal}: Once all servers have received $c_k$, they now broadcast $m_k, r_{m_k}$ to all servers in the reverse order\footnote{It is important that the reverse order is respected as it guarantees that each server's inputs are independent of the inputs of other servers.} in which the commitments arrived. Once all commitments are revealed, each server verifies that $\Com(m_k, r_k) = c_k$. If this test fails for any $k$ or one of the servers does not respond in the right order, the protocol is aborted.}
+    
+    \item{Each server computes $X = (m_1 + \dots + m_k) \mod q$. If $X \leq \lceil \frac{q}{2} \rceil$ then output $z = 0$. Otherwise $z = 1$.}
+\end{enumerate}
+
+\end{minipage}}
+\caption{$\Pi_\Morra$ A protocol for sampling a public coin}
+\label{alg: morra}
+\end{figure}
+
+

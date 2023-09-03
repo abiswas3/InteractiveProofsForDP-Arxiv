@@ -1,0 +1,244 @@
+\documentclass{article}
+
+\usepackage{arxiv}
+\input{commands.tex}
+
+
+\title{Interactive Proofs For Differentially Privacy\thanks{A Preliminary version of this work is set to appear at The ACM Conference on Computer and Communications Security (CCS), 2023}}
+
+% Here you can change the date presented in the paper title
+%\date{September 9, 1985}
+% Or remove it
+%\date{}
+
+\author{\href{https://abiswas3.github.io}{Ari Biswas}\\
+	University Of Warwick\\
+	\texttt{aribiswas3@gmail.com} \\
+	%% examples of more authors
+	\AND
+	\href{https://warwick.ac.uk/fac/sci/dcs/people/graham_cormode/}{Graham Cormode}\\
+	University Of Warwick/Meta AI \\
+	\texttt{gcormode@meta.com}
+	%% \And
+	%% Coauthor \\
+	%% Affiliation \\
+	%% Address \\
+	%% \texttt{email} \\
+	%% \And
+	%% Coauthor \\
+	%% Affiliation \\
+	%% Address \\
+	%% \texttt{email} \\
+}
+
+% Uncomment to override  the `A preprint' in the header
+\renewcommand{\headeright}{Appear at CCS 2023}
+\renewcommand{\undertitle}{}
+\renewcommand{\shorttitle}{\textit{arXiv} Template}
+
+%%% Add PDF metadata to help others organize their library
+%%% Once the PDF is generated, you can check the metadata with
+%%% $ pdfinfo template.pdf
+%\hypersetup{
+%pdftitle={Meh},
+%pdfsubject={q-bio.NC, q-bio.QM},
+%pdfauthor={David S.~Hippocampus, Elias D.~Striatum},
+%pdfkeywords={First keyword, Second keyword, More},
+%}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  Differential Privacy (DP) is often presented as a strong
+  privacy-enhancing technology with broad applicability and advocated
+  as a de-facto standard for releasing aggregate statistics on
+  sensitive data.  However, in many embodiments, DP introduces a new
+  attack surface: a malicious entity entrusted with releasing
+  statistics could manipulate the results and use the randomness of DP
+  as a convenient smokescreen to mask its nefariousness.  Since
+  revealing the random noise would obviate the purpose of introducing
+  it, the miscreant may have a perfect alibi.  To close this loophole,
+  we introduce the idea of \textit{Interactive Proofs For Differential
+    Privacy}, which requires the publishing entity to output a zero
+  knowledge proof that convinces an efficient verifier that the output
+  is both DP and reliable.  Such a definition might seem unachievable,
+  as a verifier must validate that DP randomness was generated
+  faithfully without learning anything about the randomness itself.
+  We resolve this paradox by carefully mixing private and public
+  randomness to compute verifiable DP counting queries with
+  theoretical guarantees and show that it is also practical for
+  real-world deployment.  We also demonstrate that computational
+  assumptions are necessary by showing a separation between
+  information-theoretic DP and computational DP under our definition
+  of verifiability.
+\end{abstract}
+
+
+% keywords can be removed
+%\keywords{First keyword \and Second keyword \and More}
+
+\input{tex_files/introduction.tex}
+\input{tex_files/prelims.tex}
+\input{tex_files/model.tex}
+\input{tex_files/bin_mech.tex}
+\input{tex_files/separation.tex}
+\input{tex_files/performance.tex}
+\input{tex_files/related_work.tex}
+
+\bibliographystyle{alpha-letters}
+\bibliography{references}
+
+\appendix
+
+\input{Appendix/appendix.tex}
+\appendix
+
+
+\begin{figure}
+    \centering
+\begin{pchstack}[boxed, space= 0.7\fboxsep]  % default 
+    \pseudocode[linenumbering , skipfirstln]{%
+    \textbf{Verifier} \< \< \textbf{Prover} \\[][\hline]
+     \< \text{ Common Input } g, h, \G_q, q, c \<    \\[-5pt]
+    \<\<b,  v_1, e_1 \xleftarrow{R} \Z_q; \\[-5pt]
+    \<\<\text{Set } d_0 = h^b \text{ and } d_1 \text{ such that }d_1\Big(\frac{c}{g}\Big)^{e_1} = h^{v_1}\\[-9pt]    
+    (d_0, d_1) \< \sendmessageleft*{(d_0, d_1)} \<(d_0, d_1) \\[-7pt]
+    e \xleftarrow{R} \Z_q \< \sendmessageright*{e} \< e_0 = e - e_1 \mod q; v_0 = b + e_0r_x \\[-9pt]
+    \text{Check } e_1 + e_0 = e \< \sendmessageleft*{(v_0, e_0, v_1, e_1)} \< \\[-9pt]
+    \text{Check }d_0c^{e_0} = h^{v_0} \text{ and } d_1c^{e_1} = g^{e_1}h^{v_1}\<\<
+}
+\end{pchstack}    
+    \caption{Proof for convincing $\Verifier$ that $c_x = g^xh^{r_x}$without revealing the value $x=0$.}
+    \label{fig:schnorr_or_a}
+\end{figure}
+
+
+\begin{figure*}[!h]
+    \centering
+\begin{pchstack}[boxed]  % default  
+    \pseudocode[linenumbering , skipfirstln]{%
+    \textbf{Verifier} \< \< \textbf{Prover} \\[][\hline]
+     \< \text{ Common Input } g, h, \G_q, q, c \<   \\[-5pt]
+    \<\< b, v_0, e_0 \xleftarrow{R} \Z_q\\[-5pt]
+    \<\<\text{Set } d_1 = h^b \text{ and }d_0 \text{ such that }d_0c^{e_0} = h^{v_0}\\[-9pt]    
+    (d_0, d_1) \< \sendmessageleft*{(d_0, d_1)} \<(d_0, d_1) \\[-9pt]
+    e \xleftarrow{R} \Z_q \< \sendmessageright*{e} \< e_1 = e - e_0 \mod q ; v_1 = b + e_1r_x\\[-9pt]
+    \text{Check } e_1 + e_0 = e \< \sendmessageleft*{(v_0, e_0, v_1, e_1)} \< \\[-9pt]
+    \text{Check }d_0c^{e_0} = h^{v_0} \text{ and } d_1c^{e_1} = g^{e_1}h^{v_1}\<\<
+}
+\end{pchstack}    
+    \caption{Proof for convincing $\Verifier$ that $c_x = g^xh^{r_x}$without revealing the value $x=1$.}
+    \label{fig:schnorr_or_b}
+\end{figure*}
+
+
+\section{Formal Security Definitions}
+\label{app:sec_defns}
+
+\begin{definition} [Discrete Log Assumption]Let $\SecurityParam$ denote the security parameter.
+For all PPT adversaries $\AdvA$, there exists a negligible function $\Negl$ such that 
+     \[ \Pr\left[ x = x^\prime : \begin{array}{c} \pp = (\G_q, g) \samples \texttt{Setup}(1^\kappa) \\
+     x \samples \Z_q, h = g^x \\
+       \AdvA(\pp, h) \outputs x^\prime \\
+    \end{array} \right]
+  \leq \mu(\kappa)  \] 
+
+\label{defn:discrete_log}
+\end{definition}
+
+\begin{definition} (Hiding Commitments) Let $\SecurityParam$ be the security parameter. Let $\MessageSpace_\pp$ and $\RandomnessSpace_\pp$ denote the message space and randomness space of the commitment scheme as parameterised by public parameters. A commitment scheme is said to be \textit{hiding} for all PPT adversaries $\AdvA$, if the following quantity is negligible. The commitment is \textit{perfectly hiding} if $\Negl(\SecurityParam) = 0$.
+\label{defn:hiding_com}
+     \[ \Pr\left[ b = b^\prime : \begin{array}{c} \pp \samples \texttt{Setup}(1^\kappa) \\
+     b \samples \bit, r_{x_b} \samples \RandomnessSpace_\pp \\
+      \AdvA(\pp) \outputs (x_0, x_1) \in \MessageSpace_\pp\times \MessageSpace_\pp  \\
+     c = \Com(x_b, r_{x_b}) \\
+      \AdvA(\pp, c) \outputs b^\prime
+    \end{array} \right]
+  \leq \mu(\kappa)  \] 
+\end{definition}
+
+\begin{definition} (Binding Commitments) Let $\SecurityParam$ be the security parameter. Let $\MessageSpace_\pp$ and $\RandomnessSpace_\pp$ denote the message space and randomness space of the commitment scheme as parameterised by public parameters. A commitment scheme is said to be \textit{binding} if, for all PPT adversaries $\AdvA$, there exists a negligible function $\Negl$ such that
+
+\label{defn:binding_com}
+     \[  \Pr\left[ \Com(x_0, r_0)= \Com(x_1, r_1) \land x_0 \neq x_1 : \begin{array}{c} \pp \samples \texttt{Setup}(1^\kappa) \\
+       \AdvA(\pp) \outputs x_0, r_{x_0}, x_1, r_{x_1}  \\     
+    \end{array} \right]
+ \leq \frac{1}{2} + \mu(\kappa)  \] 
+The commitment is \textit{perfectly binding} if $\mu(\kappa) = 0$.
+\end{definition}
+
+% \input{Appendix/b_dp_proofs}
+%\input{Appendix/c_fiat_shamir}
+
+
+\section{OR Protocol}
+\label{app:sigma_open}
+\ariInline{Needs work}
+
+Define as public parameters a cyclic prime order group $\G_q$ and generators $g$ and $h$ for $\G_q$. 
+Let $\mathcal{M}_\pp = \mathcal{R}_\pp = \Z_q$. 
+Pedersen Commitments defined in~\eqref{eq:pedersen} satisfy all properties described in Section~\ref{sec: commitments}.
+%
+\begin{equation}
+    \Com(x, r_x) = g^xh^{r_x}
+    \label{eq:pedersen}
+\end{equation}
+
+For the sake of completeness, we describe the interactive disjunctive OR proof using $\Sigma$-protocols from \cite{cramer1994proofs}. Note that the $\Sigma$ protocols are cheating verifier zero knowledge even without a random oracle. Maurer \cite{maurer2009unifying} shows that if the verifier's challenge space is polynomial sized, then the protocol can be shown to be zero knowledge. Damgard \etal show that by using Trapdoor commitments \cite{damgaard2000efficient}, one can preserve soundness and get zero knowledge but the protocol now has four messaging rounds instead of 3. Next, we describe the $\Sigma$-protocol that can be used to verify the OR condition. \par 
+Let $x \in \bit$ and $c_x = \Com(x, r_x)$ for $r_x \samples \Z_q$ be the commitment to $x$. 
+Given $c_x$, $\OrProtocol$ is an interactive zero knowledge proof between a prover $\Prover$ and a PPT verifier $\Verifier$ to show that $c_x \in \BitLang$. 
+The security properties can be found in \cite{thaler2020proofs, damgaard2000efficient, cramer1994proofs}.  Figure~\ref{fig:schnorr_or_a} and Figure~\ref{fig:schnorr_or_b}  succintly describe the OR protocol to prove that for some $r_x \in \Z_q$, $c_x \in \BitLang$. 
+%
+\begin{equation}
+\BitLang = \{c_x: x \in \bit \land c_x = \Com(x, r_x) \}    
+\end{equation}
+
+Based on the value for $x$, the prover uses the protocol described in . The verifier cannot distinguish between the protocol's two runs as the messages are indistinguishable. In case the the inputs $\vec{x}$ are bit strings of size $M$ (like in PRIO and Poplar) and only one coordinate can be non-negative, the prover sends to the verifier $r = \sum_{j=1}^M r_{x_j}$ along with the $\Sigma$-proofs, where $r_{x_j}$ is the randomness used to create commitments for the coordinate $x_j \in \bit$. As $\vec{x} \in L$, implies $\vec{x} \in \bit^M$ and $|| \vec{x}||_1 = 1$, the OR proofs verify the first criterion and the second criterion is easily verified by checking $c_{|| \vec{x}||} = \prod_{j=1}^M c_{x_m}$ is a a commitment to one i.e., check if $g^1h^r = c$. 
+
+
+\section{Deferred Security Proofs}
+\label{app:single_curator_sec_proof}
+
+\paragraph{Single Curator Simulator Proof}
+\ariInline{Needs the right theorem numbering}
+
+\stateboxsolid{
+\begin{thm}
+Let  $\ChVerifier$ denote the corrupted verifier. There exists a PPT Simulator $\Simulator^{\ChVerifier}$ such that for if $y \samples \Mechanism_\bin(X, Q)$, then
+
+ \begin{align*}
+    \View\left[\Pi(\Prover, \ChVerifier_{[z]})\right] &\stackrel{c}{\equiv} \Simulator^{\ChVerifier}(y, \vec{r}_\Verifier, z, \pp)        
+    \end{align*}
+
+    where $z \in \bit^{\poly(\SecurityParam)}$ and $\vec{r}_v \in \bit^{\poly(\SecurityParam)}$ represents auxiliary input and randomness available to all the corrupted parties.  	
+\end{thm}
+}
+
+
+\begin{proof}
+Denote the corrupted verifier as $\ChVerifier$.  $\Simulator$ receives on its input tape the inputs for $\ChVerifier$. The ideal oracle functionality $\Mechanism_\bin$ is defined as before. Let $\Simulator$ denote shorthand for $\Simulator^{\ChVerifier}$. 
+We construct the simulator as follows:
+\begin{enumerate}    
+    \item{$\Simulator$ receives the public messages $\{c_i\}_{i \in [n]}$.}
+%
+    \item{$\Simulator$ invokes $\Mechanism_\bin$ with the empty string $\lambda$ and receives $y$ as defined in equation \eqref{eq:M_bin}.
+    }
+%    
+    \item{$\Simulator$ samples $z \samples \RandomnessSpace_\pp$ and sets $c = \Com(y, z)$.}
+
+    \item{$\Simulator$ samples $c'_{2}, \dots, c'_{{\noisen}}$ such that $c'_{j} = \Com(1, s_{j})$ where $s_{j} \xleftarrow[]{R} \mathcal{R}_\pp$. It sets $c'_{1} = g^1a$ where $a = c \times  \Big( \prod_{j=2}^{\noisen} \hat{c}'_{j}\Big)^{-1} \times \Big( \prod_{i=1}^{n} c_{i}\Big)^{-1} \times g^{-1}$.
+     }
+%    
+     \item{$\Simulator$ sends over $\{c_{j}\}_{j \in [\noisen]}$ to $\AdvA$ pretending to be the honest prover (Line 4 of Figure \ref{fig:dp_interactive_proof}).
+     }
+	    
+    \item{$\Simulator$ pretends to be the prover and jointly invokes $\oracle_{\Morra}$ with $\AdvA$ to sample $\noisen$ unbiased public bits $(b_{1}, \dots, b_{\noisen})$.}
+%    
+    \item{$\Simulator$ sends $y$ and $z$ to $\AdvA$ and outputs whatever $\AdvA$ outputs.}
+\end{enumerate}
+\end{proof}
+%\endinput
+%
+
+\end{document}

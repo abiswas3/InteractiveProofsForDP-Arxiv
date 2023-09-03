@@ -1,0 +1,339 @@
+%\usepackage[n, 
+%% or lambda advantage , operators , sets,
+%adversary , landau , probability , notions ,
+%logic ,ff, mm,
+%primitives , events , complexity , oracles , asymptotics , keys]{cryptocode}
+\usepackage[utf8]{inputenc}
+\usepackage{bbm}
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{amsthm}
+\usepackage{tikz}
+\usepackage{tabularx}
+\usepackage[most]{tcolorbox}
+\usepackage{cleveref}       % smart cross-referencing
+\usepackage{lipsum}         % Can be removed after putting your text content
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{stmaryrd} % llbracket stuff
+%\usepackage{hyperref}
+\usepackage[square,sort,comma,numbers]{natbib}
+\usepackage{doi}
+\graphicspath{ {assets/} }
+\usepackage{bbding}
+\usepackage[colorinlistoftodos,prependcaption]{todonotes}
+\usepackage[n, 
+% or lambda advantage , operators , sets,
+adversary , landau , probability , notions ,
+logic ,ff, mm,
+primitives , events , complexity , oracles , asymptotics , keys]{cryptocode}
+
+\usepackage{stmaryrd}
+
+% FONT For The paper
+\usepackage{sans}
+\usepackage[T1]{fontenc}
+\renewcommand\familydefault{\sfdefault}
+\usepackage{setspace}
+\onehalfspacing
+
+
+\definecolor{amber}{rgb}{1.0, 0.49, 0.0}
+\definecolor{cadmiumgreen}{rgb}{0.0, 0.42, 0.24}
+\definecolor{darkcyan}{rgb}{0.0, 0.55, 0.55}
+\definecolor{darkcoral}{rgb}{0.8, 0.36, 0.27}
+\definecolor{azure}{rgb}{0.0, 0.5, 1.0}
+\definecolor{bittersweet}{rgb}{1.0, 0.44, 0.37}
+\definecolor{razzmatazz}{rgb}{0.89, 0.15, 0.42}
+
+\hypersetup{
+  colorlinks,
+  citecolor=cadmiumgreen,
+  linkcolor=azure,
+  urlcolor=azure}
+  
+
+
+
+\newtheoremstyle{theorem}%
+{3pt}% Space above
+{3pt}% Space below 
+{}% Body font
+{}% Indent amount
+{\bfseries\color{razzmatazz}}% Theorem head font
+{}% Punctuation after theorem head
+{.5em}% Space after theorem head
+{}% Theorem head spec (can be left empty, meaning ‘normal’)
+\theoremstyle{theorem}
+\newtheorem{thm}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{claim}{Claim}
+\newtheorem{fact}{Fact}
+\newtheorem{corollary}{Corollary}
+
+\newtheoremstyle{definition}%
+{3pt}% Space above
+{3pt}% Space below 
+{}% Body font
+{}% Indent amount
+{\bfseries\color{darkcyan}}% Theorem head font
+{}% Punctuation after theorem head
+{.5em}% Space after theorem head
+{}% Theorem head spec (can be left empty, meaning ‘normal’)
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{goal}{Goal}
+
+
+\newtheoremstyle{remark}%
+{3pt}% Space above
+{3pt}% Space below 
+{}% Body font
+{}% Indent amount
+{\bfseries\color{razzmatazz}}% Theorem head font
+{}% Punctuation after theorem head
+{.5em}% Space after theorem head
+{}% Theorem head spec (can be left empty, meaning ‘normal’)
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+
+%\newcommand{\stateclaimsolid}[2]{
+%  \par\noindent\tikzstyle{mybox} = [draw=black,fill=yellow!20,
+%   thick,rectangle,rounded corners, inner sep=6pt,path picture={\fill ([xshift=-6.15cm]path picture bounding box.north) rectangle (path picture bounding box.south west);}]
+%  \begin{tikzpicture}
+%   \node [mybox] (box){%
+%    \begin{minipage}{#1}{#2}\end{minipage}
+%   };
+%  \end{tikzpicture}
+%}
+
+\newcommand{\stateboxsolid}[1]{
+  \par\noindent\tikzstyle{mybox} = [draw=black,fill=white!20,
+   thick,rectangle,rounded corners,inner sep=6pt]
+  \begin{tikzpicture}
+    \node [mybox] (box){%
+    \begin{minipage}{0.99\textwidth}{#1}\end{minipage}
+   };
+  \end{tikzpicture}
+}
+\newcommand{\statetheoremsolid}[2]{
+  \par\noindent\tikzstyle{mybox} = [draw=black,fill=yellow!20,
+   thick,rectangle,rounded corners,inner sep=6pt]
+  \begin{tikzpicture}
+    \node [mybox] (box){%
+    \begin{minipage}{#1}{#2}\end{minipage}
+   };
+  \end{tikzpicture}
+}
+% TIKZ stuff above
+
+% Typical re-transformations
+%\renewcommand{\epsilon}{\varepsilon}
+\newcommand{\bit}{\{ 0, 1\}}
+\renewcommand{\poly}{\mathsf{poly}}
+%\newcommand{\pp}{\mathtt{pp}}
+\newcommand{\samples}{\xleftarrow{\$}}
+\newcommand{\inputs}{\xleftarrow{\mathsf{input}}}
+\newcommand{\outputs}{\xrightarrow{\mathsf{output}}}
+\newcommand{\samplesIdd}{\xleftarrow{\mathsf{i.i.d}}}
+
+\newcommand{\AdvA}{\ensuremath{\mathcal{A}}}
+\renewcommand{\oracle}{\ensuremath{\mathcal{O}}}
+
+\newcommand{\PermDist}{\mathcal{D}}
+\newcommand{\FarPermDist}{\hat{\mathcal{D}}}
+
+
+\newcounter{protocol}
+\newenvironment{protocol}[1]
+  {\par\addvspace{\topsep}
+   \noindent
+   \tabularx{\linewidth}{@{} X @{}}
+    \hline
+    \refstepcounter{protocol}\textbf{Protocol \theprotocol} #1 \\
+    \hline}
+  { \\
+    \hline
+   \endtabularx
+   \par\addvspace{\topsep}}
+
+\newcommand{\xmark}{\text{}}
+
+
+\newcommand{\etal}{\textit{et al.}{ }}
+\newcommand{\bin}{\mathtt{Bin}}
+
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\G}{\mathbb{G}}
+\renewcommand{\pp}{\texttt{pp}}
+\newcommand{\noisen}{\eta}
+\newcommand{\Mechanism}{\mathtt{M}}
+
+\renewcommand{\OR}{\mathsf{OR}}
+\newcommand{\OrProtocol}{\Pi_\OR}
+\newcommand{\BitLang}{\mathsf{L}_{\mathsf{Bit}}}
+\newcommand{\Setup}{\mathtt{Setup}}
+\newcommand{\Morra}{\mathtt{morra}}
+\newcommand{\Output}{\mathtt{out}}
+\newcommand{\share}[1]{\llbracket #1 \rrbracket}
+\renewcommand{\gets}{\xleftarrow{\texttt{Input}}}
+%\newcommand{\SecretShare}[2]{\Big( [#1]_{1}, \dots, [#1]_{#2}\Big)}
+
+% Commitment stuff
+\newcommand{\RandomnessSpace}{\mathsf{Rand}}
+\newcommand{\MessageSpace}{\mathsf{Msg}}
+
+
+\DeclareMathOperator{\Com}{Com}
+\renewcommand{\bin}{\mathsf{Bin}}
+%text symbols
+\newcommand{\SecurityParam}{\kappa}
+\newcommand{\Naturals}{\mathbb{N}}
+\newcommand{\Normal}{\mathcal{N}}
+\newcommand{\Integers}{\mathbb{Z}}
+\newcommand{\Reals}{\mathbb{R}}
+\newcommand{\Identity}{\mathit{I}}
+\newcommand{\Exp}{\mathsf{exp}}
+\renewcommand{\exp}{\Exp}
+\newcommand{\Eps}{\varepsilon}
+\newcommand{\EpsDelta}{(\Eps, \delta)}
+
+%functions
+\newcommand{\FuncDomain}{\mathcal{X}}
+\newcommand{\FuncRange}{\mathcal{Y}}
+\newcommand{\FuncFamily}{\mathcal{Q}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+%graphs
+\newcommand{\Vertices}{\mathcal{V}}
+\newcommand{\Edges}{\mathcal{E}}
+\newcommand{\Adjacency}{\mathtt{Adj}}
+\newcommand{\Incidence}{\mathtt{Inc}}
+\newcommand{\hamming}[1]{d_\mathtt{Ham} #1}
+
+%distributions
+\newcommand{\Dist}{\mathcal{D}}
+\newcommand{\Support}{\mathsf{Support}}
+
+\newcommand{\SuppSize}{\mathsf{n}}
+\newcommand{\DomainDist}{\Omega_{\SuppSize}}
+\newcommand{\DomainDistJoint}{\Omega_{\mathsf{n_1} \times \mathsf{n_2}}}
+\newcommand{\DomainDistJointSame}{\Omega_{\mathsf{n} \times \mathsf{n}}}
+\newcommand{\DistSet}{\Delta(\DomainDist)}
+\newcommand{\DistSetJoint}{\Delta(\DomainDistJoint)}
+\newcommand{\DistSetJointSame}{\Delta(\DomainDistJointSame)}
+\newcommand\TotalVar[2]{d_{\textsf{TV}}(#1,#2)}
+\newcommand{\Negl}{\mu}
+\newcommand{\AvgMinEntropy}{\tilde{H}_\infty}
+
+
+%distribution testing
+\newcommand{\DIP}{\mathsf{DIP}}
+\newcommand{\EZKDIP}{\mathsf{EZKDIP}}
+\newcommand{\ZKDIP}{\mathsf{ZKDIP}}
+\newcommand{\SZKDIP}{\mathsf{SZKDIP}}
+\newcommand{\HVCZK}{\mathsf{HVCZK}}
+\newcommand{\HVCZKD}{\mathsf{HVCZK-D}}
+\newcommand{\out}{\mathsf{out}}
+\newcommand{\Tester}{\mathsf{T}}
+\newcommand{\Verifier}{\mathsf{V}}
+\newcommand{\Prover}{\mathsf{P}}
+\newcommand{\Sender}{\mathsf{S}}
+\newcommand{\Receiver}{\mathsf{R}}
+\newcommand{\ChSender}{\mathsf{\hat{S}}}
+\newcommand{\ChReceiver}{\mathsf{\hat{R}}}
+\newcommand{\ChVerifier}{\mathsf{\hat{V}}}
+\newcommand{\ChProver}{\mathsf{\widetilde{P}}}
+\newcommand{\OptProver}{\mathsf{P}^*}
+\newcommand{\Simulator}{\mathsf{Sim}}
+\newcommand{\AuxInput}{z}
+\newcommand{\View}{\mathrm{view}}
+\newcommand{\Prop}{\Pi}
+\newcommand{\PropJoint}{\Pi_{\mathsf{n_1} \times \mathsf{n_2}}}
+\newcommand{\PropJointSame}{\Pi_{\mathsf{n} \times \mathsf{n}}}
+\newcommand{\Proximity}{\delta}
+\newcommand{\Accept}{\textsf{accept}}
+\newcommand{\Reject}{\textsf{reject}}
+\newcommand{\interacton}[2]{ \left(#1, #2 \right)}
+\newcommand{\VerifierLocalRand}{\vec{\rho}}
+\newcommand{\TV}[1]{d_\mathtt{TV} #1}
+\newcommand{\EM}[1]{d_\mathtt{EM} #1}
+\newcommand{\statInd}{\stackrel{s}{\equiv}}
+\newcommand{\compInd}{\stackrel{c}{\equiv}}
+
+
+%permuatations
+\newcommand{\PermProp}{\Prop^\mathsf{BIJECT}_n}
+\newcommand{\PermSize}{n}
+\newcommand{\Perm}{f}
+\newcommand{\Bad}{\mathsf{Bad}}
+\newcommand{\Good}{\mathsf{Good}}
+
+
+%permutation protocol
+\newcommand{\NumSamples}{k}
+\newcommand{\NumRounds}{T}
+\newcommand{\RandRound}{t}
+\newcommand{\RoundInd}{\mathsf{round}}
+\newcommand{\PermSamplePoint}{x}
+\newcommand{\PermChallengePoint}{y}
+\newcommand{\Challenge}{\mathsf{CHALLENGE}}
+\newcommand{\NotPerm}{\hat{f}}
+\newcommand{\PermProver}{\mathsf{P}_{\text{perm}}}
+\newcommand{\PermVerifier}{\mathsf{V}_{\text{perm}}}
+
+\newcommand{\Cheat}{\mathsf{Cheat}}
+\newcommand{\True}{\mathsf{TRUE}}
+\newcommand{\No}{\mathsf{No}}
+\newcommand{\Yes}{\mathsf{Yes}}
+\newcommand{\False}{\mathsf{FALSE}}
+\newcommand{\calR}{\mathcal{R}}
+
+% computational ZK
+\newcommand{\com}{\mathtt{com}}
+
+%mathsf
+\newcommand{\sfA}{\mathsf{A}}
+
+
+%complexity classes
+\newcommand{\eIPP}{\ensuremath{\Proximity\mathsf{-IPP}}}
+
+\newcommand{\sbline}{\\[.5\normalbaselineskip]}% small blank line
+\newcommand\inner[2]{\langle #1, #2 \rangle}
+\newcommand\Biginner[2]{\Big\langle #1, #2 \Big\rangle}
+\newcommand{\boocube}{\{0, 1\}^n}
+\newcommand{\boodist}{\Delta(\boocube,\boocube)}
+
+%operators
+\newcommand{\pST}{\; \middle| \;}
+
+%formatting
+\newcommand{\DoQuote}[1]{``#1''}
+\newcommand{\defemph}[1]{\textbf{\emph{#1}}}
+
+
+%notes
+\newcommand{\ariInline}[1]{\todo[backgroundcolor=azure!15, bordercolor=azure, textcolor=black, inline]{#1 - Ari}}
+\newcommand{\ari}[1]{\todo[backgroundcolor=azure!15, bordercolor=azure, textcolor=black]{#1 - Ari}}
+
+\newcommand{\NR}[1]{\todo[backgroundcolor=bittersweet!15, bordercolor=bittersweet, textcolor=black, inline]{#1 - Ninad}}
+
+\newcommand{\highlight}[1]{\color{razzmatazz}\textit{#1 }\color{black}}
+%\newtheorem{definition}{Definition}[section]
+%\newtheorem{remark}[definition]{Remark}
+%\newtheorem{theorem}[definition]{Theorem}
+%\newtheorem{lemma}[definition]{Lemma}
+%\newtheorem{corollary}[definition]{Corollary}
+%\newtheorem{prop}[definition]{Proposition}

@@ -1,0 +1,75 @@
+\section{Related Work}
+\label{sec:related_work}
+\UseRawInputEncoding
+
+% Please add the following required packages to your document preamble:
+
+\begin{table*}[]
+\centering
+\caption{Summary of efforts MPC computation of aggregate DP statistics. 
+The active security column describes if the protocols allowed participants to deviate arbitrarily. The Central DP column describes if the protocol output satisfies constant DP error independent of the number of clients participating in the protocol. The auditable property describes if the final output can be verified for correctness. Some interactive protocols leak additional information (such as prefix information about client input bits) beyond just the DP output. The leakage column describes if the prescribed protocols suffered from additional leakage.}
+\label{table:related_work}
+\begin{tabular}{@{}lllll@{}}
+\toprule
+Protocol                                   & Active Security                                            & Central DP                        & Auditable                         & Zero Leakage                           \\ \midrule
+\multicolumn{1}{|l|}{Cryptographic RR \cite{ambainis2004cryptographic}}  & \multicolumn{1}{c|}{$\checkmark$}                &  \multicolumn{1}{l|}{} &   \multicolumn{1}{c|}{}   & \multicolumn{1}{c|}{$\checkmark$}     \\
+\multicolumn{1}{|l|}{Verifiable Randomization Mechanism \cite{kato2021preventing}}  & \multicolumn{1}{c|}{$\checkmark$}                &  \multicolumn{1}{l|}{} &   \multicolumn{1}{c|}{$\checkmark$}   & \multicolumn{1}{c|}{$\checkmark$}     \\
+\multicolumn{1}{|l|}{Securely Sampling Biased Coins \cite{champion2019securely}}              & \multicolumn{1}{l|}{}                & \multicolumn{1}{c|}{$\checkmark$} & \multicolumn{1}{l|}{$\xmark$}     & \multicolumn{1}{c|}{$\checkmark$}     \\
+\multicolumn{1}{|l|}{MPC-DP heavy hitters\cite{bohler2021secure}}              & \multicolumn{1}{l|}{}                & \multicolumn{1}{c|}{$\checkmark$} & \multicolumn{1}{l|}{$\xmark$}     & \multicolumn{1}{c|}{$\checkmark$}     \\
+% \multicolumn{1}{|l|}{MPC-DP median \cite{bohler2020secure}}              & \multicolumn{1}{l|}{}                & \multicolumn{1}{c|}{$\checkmark$} & \multicolumn{1}{l|}{$\xmark$}     & \multicolumn{1}{c|}{$\checkmark$}     \\
+\multicolumn{1}{|l|}{PRIO \cite{corrigan-gibbs_prio_2017}}              & \multicolumn{1}{l|}{}                & \multicolumn{1}{c|}{$\checkmark$} & \multicolumn{1}{l|}{$\xmark$}     & \multicolumn{1}{c|}{$\checkmark$}     \\
+\multicolumn{1}{|l|}{Brave STAR \cite{davidson2021star}}        & \multicolumn{1}{l|}{}                 & \multicolumn{1}{l|}{}             & \multicolumn{1}{l|}{$\xmark$}     & \multicolumn{1}{l|}{} \\
+\multicolumn{1}{|l|}{Sparse Histograms \cite{bell2020secure}} & \multicolumn{1}{l|}{}                 & \multicolumn{1}{c|}{$\checkmark$} & \multicolumn{1}{l|}{$\xmark$}     & \multicolumn{1}{l|}{} \\
+\multicolumn{1}{|l|}{Crypt-$\epsilon$ \cite{roy2020crypt}}           & \multicolumn{1}{l|}{}                 & \multicolumn{1}{c|}{$\checkmark$} & \multicolumn{1}{l|}{$\xmark$}     & \multicolumn{1}{l|}{}             \\
+\multicolumn{1}{|l|}{Poplar \cite{boneh_lightweight_2022}}            & \multicolumn{1}{c|}{$\checkmark$} & \multicolumn{1}{c|}{$\checkmark$} & \multicolumn{1}{l|}{$\xmark$}     & \multicolumn{1}{l|}{} \\
+\multicolumn{1}{|l|}{Our work}          & \multicolumn{1}{c|}{$\checkmark$}                     & \multicolumn{1}{c|}{$\checkmark$} & \multicolumn{1}{c|}{$\checkmark$} & \multicolumn{1}{c|}{$\checkmark$}     \\ \bottomrule
+\end{tabular}
+\end{table*}
+
+Dwork \etal introduced DP and described the Laplace mechanism for outputting histograms in the trusted curator model~\cite{dwork2006calibrating}.  Soon after, McSherry \etal proposed the exponential mechanism \cite{mcsherry2007mechanism} (equivalently, report noisy max \cite{ding2021permute}), which lets us compute the (approximately) most frequent bucket in a histogram, also under pure differential privacy.  Although these mechanisms give us pure differential privacy and optimal error rates $O(\frac{1}{\epsilon})$, implementing such a ``central'' model requires trusting that the curator to follow the protocol and not exploit the client data that it sees in plaintext. 
+
+
+Therefore, researchers studied local privacy (LDP)  \cite{kasiviswanathan2011can} using randomised response \cite{warner1965randomized} to prevent any other party from seeing data in plaintext. 
+Cheu, Smith and Ullman showed that the randomised response algorithm generalises all locally private protocols \cite{cheu2021manipulation}. 
+This generalisation highlights two unavoidable disadvantages of local differential privacy. 
+The first is that the accuracy of the protocol for even the binary histogram is $O(\sqrt{n})$ compared to $O(1)$ in the central model. 
+The second is that randomised response systems offer a much weaker definition of privacy than the usual cryptography standards such as semantic security. 
+For example, if the client flips their original answer with probability $p=0.1$, the curator sees their sensitive information in plain text 90\% of the time. 
+Further increasing $p$ reduces the accuracy of the protocol dramatically. 
+Consider the example from~\cite{corrigan-gibbs_prio_2017}, where 1\% of a million people answer ``yes'' to a survey about a sensitive topic. 
+If we set $p=0.49$, then one-third of the time the central analyser concludes that not a single  member of the population answered ``yes''. 
+Thus if we want to preserve utility, this definition of security is considerably weaker than the indistinguishability guarantees provided by protocols such as secret sharing.
+
+Shuffle privacy \cite{cheu2021differential, balle2019privacy, erlingsson_amplification_2020} analyses local mechanisms under the lens of central privacy and bridges the accuracy gap between local and central models. 
+Various results~\cite{ghazi_power_2020, balcer_separating_2020} prove that near central error guarantees are possible with distributed local transformations. Although this bypasses the accuracy issue of LDP, shuffle privacy assumes the existence of a secure shuffler, which is non-trivial to implement. 
+Meanwhile, Bell \etal show that secure aggregation realises secure shuffling \cite{bell2020secure}. 
+However, such protocols impose the impractical constraint of secure peer-to-peer communication between clients, and the curator is still a single source of failure. 
+Despite the immense progress on differentially private histogram estimation, all known efficient implementations assume semi-honest participants and are a variant of either randomised response or the additive mechanism (where,  
+additive mechanisms involve adding carefully curated randomness to the statistic before being released as output). 
+It only takes a small fraction of clients to deviate from their prescribed protocol to destroy any utility of randomised response \cite{cheu2021manipulation}. 
+
+% It is easy to see how byzantine participants could violate the utility and privacy of additive mechanisms. 
+% For example, in the case of central privacy, the trusted server could simply output any value of their choice instead of following the protocol. 
+% Or, the central server could reveal the randomness to an adversary $\AdvA$, who is then able to subtract randomness from the output.  
+% The crux of the problem is that the participating clients do not have the means to validate the server's actions while receiving low error private aggregate statistics. 
+
+
+To ensure central DP error without a trusted curator, Dwork \etal proposed using standard MPC for computing DP statistics~\cite{dwork2006our}. 
+They proposed that each of the $K$ servers would own a fraction of the entire dataset used for computation. 
+As long as not more than $\lfloor \frac{K}{3} \rfloor$ of the servers are dishonest, it is possible to compute DP-histograms with optimal accuracy. 
+However, the protocol is not publicly auditable and breaks down in presence of a dishonest majority of adversarial corruptions. McGregor \etal show a separation between DP obtained using a trusted curator and that obtained using MPC \cite{mcgregor2010limits}. Specifically, they show that there exist computations (such as inner product or Hamming distance) where mechanisms with $(1, 0)$-DP incur $\Omega(\sqrt{n})$ reconstruction error compared to $O(1)$ in presence of a trusted curator. 
+To bridge this gap, Mironov \etal defined computational differential privacy, a relaxation of traditional DP~\cite{mironov2009computational}. They show that as long as semi-honest OT exists, it is possible to compute any computationally DP function with the same error rates as information theoretic DP in a trusted curator model. 
+Histograms, unlike inner product and Hamming distance, can be computed using MPC with the same error rates as trusted curator DP, under infomation theoretic DP. 
+Thus recent work has focused on computing histograms using MPC. 
+
+Bohler \etal use MPC to compute heavy hitters with semi-honest adversaries~\cite{bohler2021secure}. 
+Researchers at Brave use oblivious pseudorandom functions (OPRF's) \cite{jarecki2009efficient} and Shamir secret sharing \cite{shamir1979share} to compute $k$-anonymous histograms in the two server setting~\cite{davidson2021star}.  However, they do not include support for differential privacy. Researchers at Google use linear homomorphic encryption and OPRFs to compute differentially private sparse histograms in two-server models (2PC)~\cite{bell2022distributed}, but require both the servers and clients to be semi-honest.
+Corrigan-Gibbs propose PRIO, a protocol in which a small number of servers receive arithmetic shares of client input to compute differentially private histograms \cite{corrigan-gibbs_prio_2017}. PRIO uses shared non interactive proofs (SNIPs) to prevent clients from submitting illegal inputs but the protocol is only honest-verifier zero knowledge. Following the popularity of PRIO, Addanki \etal introduce PRIO+ to work over Boolean shares \cite{addanki2022prio+}. Boneh \etal use distributed point functions (DPFs) \cite{boyle2019secure} to compute DP heavy-hitters in the two server model to propose a system called Poplar \cite{boneh_lightweight_2022} that is zero knowledge even in presence of active adversaries. Roy \etal introduce \textit{Crypt}-$\epsilon$, a generic system to compute differentially private statisitcs using garbled circuits and linear homomorphic encryption \cite{roy2020crypt}. The general purpose natue of \textit{Crypt}-$\epsilon$ guarantees security only in the semi-honest threat model. Ambainis \etal proposed cryptographic randomised response \cite{ambainis2004cryptographic} but are able to only guarantee local differential privacy. Table \ref{table:related_work} summarises the assumptions under which the latest MPC protocols that have been used to compute DP statistics. As described earlier, existing work either assumes semi-honest adversaries or is not auditable. In 2021, the State Of Alabama sued the US deparment of commerce with regard to the errors caused due to random noise \cite{courtCase}. Differential Privacy by its defintion introduces a random noise blanket that tradesoff accuracy for privacy. This randomness is unavoidable if we wanted to protect individual privacy, but it also enables a corrupt aggregating server to disguise adversarial behaviour as randomness. In our paper, we first upgrade to security against active adversaries. Like existing literature we work in the dishonest majority model and further require the protocols to be publicly auditable. Our privacy constraints describe the most strict adversarial setting for practical deployment.
+
+\section{Concluding Remarks}
+
+We have introduced the notion of verifiable differential privacy to prevent malicious aggregators from using random noise as an attack vector. 
+We have demonstrated the feasibility of this notion and showed that computational DP is necessary to achieve verifiability. 
+A natural open question is to provide protocols for more complex DP mechanisms.  
+Our protocol deliberately uses simple randomness (a Binomial distribution constructed from Bernoulli random variables), as making verifiable Laplace or Gaussian noise is far from clear.  
+Similarly, approaches based on sampling from an appropriate distribution (the exponential mechanism) may be challenging since the distribution itself leaks information about the private data. 

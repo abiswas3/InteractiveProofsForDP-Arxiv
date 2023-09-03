@@ -1,0 +1,135 @@
+\section{Introduction}
+\label{sec:introduction}
+
+We are living in an age of delegation, where the bulk of our digital
+data is held and processed by others in an opaque fashion.  Our
+interactions are collated by digital applications that continually
+send our personal information to the ``cloud''.  Servers in the cloud,
+typically owned by large monolithic organizations, such as Google, AWS
+or Microsoft, then perform computations on our private data to publish
+aggregate statistics for social utility.  For example, we send our GPS
+coordinates to services like Strava and Google which, in exchange, use
+this information to recommend low-traffic cycling
+routes~\cite{raturi2021impact}.  Similarly, we let entertainment
+companies like Netflix, YouTube, TikTok and Hulu know our personal
+preferences so that they can better recommend content for us to
+consume~\cite{bell2007lessons}.  National census bureaus collect
+personal information to publish aggregate statistics about the
+population, and consider doing so a moral duty to ensure transparency
+in the government's policies~\cite{boyd2022differential}.
+
+However, it is often the case that published aggregate statistics leak
+information about the activity of individuals.  For example, Garfinkel
+\etal and Kasiviswanathan \etal describe practical reconstruction
+attacks that can be used to infer an individual's private data from
+aggregate population statistics ~\cite{garfinkel2019understanding,
+  kasiviswanathan2013power}.  Boyd \etal show that published census
+data has been used to discriminate against groups in society based on
+race ~\cite{boyd2022differential}.  Hence the information that is
+released, and how it is computed, requires careful scrutiny.
+%In this such cases, the privacy leakage is a property of the functionality being computed, and not the protocol used to compute it. 
+
+In response to these concerns, the privacy and security community have
+sought to apply various privacy enhancing technologies to protect the
+privacy of individuals contributing to data releases.  Most relevant
+to this discussion is Differential Privacy (DP) and its
+generalizations, which require computations to be randomized, in order
+to offer the (informally stated) promise that users will not be
+adversely affected by allowing their data to be used.  Typically, this
+is achieved by adding carefully calibrated random noise to the output,
+at the expense of reducing the accuracy of the computation.
+Differential privacy is most commonly studied in the \textit{trusted
+  curator} model, where a single entity receives all the sensitive
+data, and is entrusted to execute the algorithm to apply the random
+noise.  Variations that modify the trust and computational model
+include local privacy \cite{warner1965randomized}, shuffle privacy
+\cite{balle2019privacy, champion2019securely}, computational
+differential privacy ~\cite{mironov2009computational} and multi-party
+differential privacy \cite{mcgregor2010limits}.
+
+A consistent theme across all existing work is to view DP simply as a
+privacy-preserving mechanism.  In this paper, we shift the focus and
+view differential privacy through an adversarial lens: \highlight{what if
+  the entity responsible for releasing aggregate DP statistics seeks to abuse 
+  the protocol and pick noise chosen to distort the statistics, using 
+  differential privacy as an attack vector?}
+
+That is, a malicious entity may tamper with the computation in order
+to publish biased statistics, and claim this reflects the true
+outcome; any discrepancies may be dismissed as artifacts of random
+noise.  Consider a counting query DP protocol to determine the winner
+of a plurality election, where the users vote for 1 out of $M$
+candidates (say, which topping people prefer on their pizza).  A
+corrupted aggregator might not be interested in any particular user's
+vote but in biasing the aggregate output of the protocol instead.
+Thus, if that server has auxiliary information about the preferences
+of a subset of users, they might tamper with the protocol to exclude
+those honest voters from the election or tamper with the protocol to
+bias the results of the election (say, to pineapple) and blame any
+discrepancies in the result on random noise introduced by DP.  Note
+that some loss in accuracy for privacy is unavoidable.  By definition,
+DP requires the output be perturbed by private randomness.  Often,
+outputting such random statistics creates tensions between publishing
+entity and the downstream consumer.  In 2021, the State Of Alabama
+filed a lawsuit claiming that the use of DP on census data was
+illegal~\cite{courtCase}, citing the inaccuracies introduced by DP.
+Thus, to ensure public trust in DP, it is critical to verify that any
+loss in utility can be attributed solely to unavoidable DP randomness.
+
+To that effect, we formally introduce the idea of
+\textit{Interactive Proofs For 
+  Differential Privacy} in both the trusted curator \footnote{When we say trusted curator, we imply that there is a single server that can view client inputs in plaintext. However, this server could still be corrupted and therefore, it must prove that the final released output was computed as prescribed the DP protocol. Of course in the single server setting we cannot protect client privacy. The focus is on ensuring the output is reliable}  setting and the multi-party setting in presence of active adversaries
+  \footnote{By active adversaries, we mean participants that may deviate from protocol specifications arbitrarily. In the MPC setting we can guarantee both privacy of client inputs and reliability of output.}. Our contributions are as
+follows:
+
+\begin{enumerate}
+
+\item{We formally introduce definitions for
+    \textit{Interactive Proofs For Differential Privacy} in
+    both the trusted curator and client-server multiparty setting
+    \cite{baum2014publicly}. Informally, the entity responsible for
+    releasing DP statistics must also output a
+    zero knowledge proof to verify that the statistic was computed
+    correctly with respect to committed client inputs and the private randomness generated faithfully. Such a
+    proof reveals no additional information and still enforces that
+    user privacy is protected via DP but ensures that the curator
+    cannot use DP randomness maliciously.}
+
+\item{We show concrete instantiations of verifiable DP by computing DP
+    counting queries (histograms) in the trusted curator and
+    client-server multiparty settings. In the trusted curator
+    setting, there is a single aggregating server that sees client
+    data in plaintext and is responsible for outputting a DP histogram
+    and a proof that the DP noise was generated faithfully. In the
+    client-server MPC setting, clients secret share the inputs and
+    send them to $K \geq 2$ servers, who then participate in an MPC
+    protocol to output DP histograms. The protocol itself is secure in
+    that not even the participating servers are able to learn any new
+    information beyond the output nor are they able to tamper with the
+    protocol.}
+    
+\item{We conduct experiments to show that our protocols with formal
+    theoretical guarantees are also practical.  Additionally, we
+    describe how our protocol $\Pi_\bin$, for verifiable DP counting,
+    can be combined with existing (non-verifiable) DP-MPC protocols,
+    such as PRIO \cite{corrigan-gibbs_prio_2017} and Poplar
+    \cite{boneh_lightweight_2022}, to enforce verifiability.}
+	
+
+\item{We demonstrate that information-theoretic verifiable DP is
+    impossible. Specifically, if both the prover and verifier are
+    computationally unbounded, then statistical zero knowledge
+    and unconditional soundness cannot hold simultaneously. Thus we could either
+    prevent an all-powerful curator from manipulating DP protocols or
+    an all-powerful verifier from being able to distinguish between
+    neighbouring datasets from the output, but not both.  This result
+    is related to an open problem (Open Problem 10.6) of
+    Vadhan~\cite{vadhan2017complexity}, which asks \textit{``Is there
+      a computational task solvable by a single curator with
+      computational differential privacy but is impossible to achieve
+      with information-theoretic differential privacy?''}.  In Section
+    \ref{sec:separation} we relate our result to efforts at resolving
+    this question.}
+
+\end{enumerate}
+
